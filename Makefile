@@ -17,13 +17,13 @@ BOOTLOADER_OBJ_DIR = build/bootloader
 BOOTLOADER_SRC_FILES := $(shell find $(BOOTLOADER_SRC_DIR) -name '*.c')
 BOOTLOADER_OBJ_FILES := $(patsubst $(BOOTLOADER_SRC_DIR)/%.c, $(BOOTLOADER_OBJ_DIR)/%.o, $(BOOTLOADER_SRC_FILES))
 
-KERNEL_CFLAGS = -ffreestanding -fshort-wchar
+KERNEL_CFLAGS = -ffreestanding -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Iinclude/kernel/
 KERNEL_LDFLAGS = -T src/kernel/linker.ld -static -Bsymbolic -nostdlib
 
 KERNEL_SRC_DIR = src/kernel
 KERNEL_OBJ_DIR = build/kernel
-KERNEL_SRC_FILES := $(shell find $(KERNEL_SRC_DIR) -name '*.c')
-KERNEL_OBJ_FILES := $(patsubst $(KERNEL_SRC_DIR)/%.c, $(KERNEL_OBJ_DIR)/%.o, $(KERNEL_SRC_FILES))
+KERNEL_SRC_FILES := $(shell find $(KERNEL_SRC_DIR) -name '*.cpp')
+KERNEL_OBJ_FILES := $(patsubst $(KERNEL_SRC_DIR)/%.cpp, $(KERNEL_OBJ_DIR)/%.o, $(KERNEL_SRC_FILES))
 
 # --------------------- Bootloader stuff ------------------------
 
@@ -42,14 +42,15 @@ $(DIST_DIR)/bootloader.efi: $(DIST_DIR)/bootloader.so
 
 # ---------------------- Kernel stuff ----------------------------
 
-$(KERNEL_OBJ_DIR)/%.o: $(KERNEL_SRC_DIR)/%.c
+$(KERNEL_OBJ_DIR)/%.o: $(KERNEL_SRC_DIR)/%.cpp
 	mkdir -p $(@D)
 
 	$(CC) $(KERNEL_CFLAGS) -c $^ -o $@
 
 $(DIST_DIR)/kernel.elf: $(KERNEL_OBJ_FILES)
 	mkdir -p $(DIST_DIR)
-	$(LD) $(LDFLAGS) $^ -o $@
+
+	$(LD) $(KERNEL_LDFLAGS) $^ -o $@
 
 # ---------------------- Image Creation --------------------------
 
