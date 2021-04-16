@@ -17,7 +17,7 @@ BOOTLOADER_OBJ_DIR = build/bootloader
 BOOTLOADER_SRC_FILES := $(shell find $(BOOTLOADER_SRC_DIR) -name '*.c')
 BOOTLOADER_OBJ_FILES := $(patsubst $(BOOTLOADER_SRC_DIR)/%.c, $(BOOTLOADER_OBJ_DIR)/%.o, $(BOOTLOADER_SRC_FILES))
 
-KERNEL_CFLAGS = -ffreestanding -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Iinclude/kernel/
+KERNEL_CFLAGS = -ffreestanding -Wno-write-strings -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Iinclude/kernel/
 KERNEL_LDFLAGS = -T src/kernel/linker.ld -static -Bsymbolic -nostdlib
 
 KERNEL_SRC_DIR = src/kernel

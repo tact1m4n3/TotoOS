@@ -29,6 +29,15 @@ typedef struct
 	void* glyphBuffer;
 } PSF1_FONT;
 
+typedef struct 
+{
+	FrameBuffer* frameBuffer;
+	PSF1_FONT* psf1Font;
+	EFI_MEMORY_DESCRIPTOR* memoryMap;
+	UINTN memoryMapSize;
+	UINTN memoryMapDescriptorSize;
+} BootInfo;
+
 FrameBuffer frameBuffer;
 
 FrameBuffer* InitializeGop()
@@ -186,8 +195,6 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 
 	Print(L"Kernel Loaded\n\r");
 
-	void (*KernelEntry)(FrameBuffer*, PSF1_FONT*) = ((__attribute((sysv_abi)) void (*)(FrameBuffer*, PSF1_FONT*) ) header.e_entry);
-
 	PSF1_FONT* newFont = LoadPSF1Font(NULL, L"zap-light16.psf", ImageHandle, SystemTable);
 	if (newFont == NULL)
 	{
@@ -198,9 +205,27 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 
 	FrameBuffer* newBuffer = InitializeGop();
 
-	Print(L"Base: 0x%x\n\rSize: 0x%x\n\rWidth: %d\n\rHeight: %d\n\rPixelsPerScanLine: %d\n\r", (size_t)newBuffer->BaseAddress, newBuffer->BufferSize, newBuffer->Width, newBuffer->Height, newBuffer->PixelsPerScanLine);
+	EFI_MEMORY_DESCRIPTOR* Map = NULL;
+	UINTN MapSize, MapKey;
+	UINTN DescriptorSize;
+	UINT32 DescriptorVersion;
+
+	SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
+	SystemTable->BootServices->AllocatePool(EfiLoaderData, MapSize, (void**)&Map);
+	SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
 	
-	KernelEntry(newBuffer, newFont);
+	void (*KernelEntry)(BootInfo*) = ((__attribute((sysv_abi)) void (*)(BootInfo*) ) header.e_entry);
+
+	BootInfo bootInfo;
+	bootInfo.frameBuffer = newBuffer;
+	bootInfo.psf1Font = newFont;
+	bootInfo.memoryMap = Map;
+	bootInfo.memoryMapSize = MapSize;
+	bootInfo.memoryMapDescriptorSize = DescriptorSize;
+
+	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+
+	KernelEntry(&bootInfo);
 
 	return EFI_SUCCESS;
 }

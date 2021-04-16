@@ -45,7 +45,7 @@ void Renderer::DrawChar(int _posX, int _posY, unsigned char _c, int _fontSize, R
             if (fontBitmap[j] & (1 << 8-i))
                 for (int k = 0; k < _fontSize; ++k)
                     for (int l = 0; l < _fontSize; ++l)
-                        videoBuffer[_posX + l + i * _fontSize + (_posY + k-1 + j * _fontSize) * 1920] = RGBToLegacyColor(_fontColor);
+                        videoBuffer[_posX + l + i * _fontSize + (_posY + k-1 + j * _fontSize) * currentFrameBuffer->PixelsPerScanLine] = RGBToLegacyColor(_fontColor);
 }
 
 void Renderer::Clear(RGBColor _bgColor)

@@ -22,6 +22,8 @@ public:
     ~Terminal();
 
     void Print(char* _str);
+    void PrintNumber(size_t num);
+    void PrintHex(size_t num);
     void PutChar(char _c);
     void Clear(RGBColor _bgColor);
 public:

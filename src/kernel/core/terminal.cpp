@@ -34,6 +34,17 @@ void Terminal::Print(char* _str)
         PutChar(*ptr);
 }
 
+void Terminal::PrintNumber(size_t num)
+{
+    Print(convert(num, 10));
+}
+
+void Terminal::PrintHex(size_t num)
+{
+    Print("0x");
+    Print(convert(num, 16));
+}
+
 void Terminal::PutChar(char _c)
 {
     if (_c == '\n')
