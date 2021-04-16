@@ -8,7 +8,7 @@ extern "C" void main(FrameBuffer* frameBuffer, Psf1Font* psf1Font)
 
 	Terminal terminal(400, 100, 1920 - 400 * 2, 1080 - 100 * 2, 2, {0, 0, 0}, {255, 255, 255});
 
-	terminal.Print((char*)"Hellooooooooooooooooooooooooooooooooooooooooo\n");
+	terminal.Print((char*)"Hellooooooooooo\toooooooooooooooooooooooooooooo\n");
 	terminal.Print((char*)"Hellooooooooooooooooooooooooooooooooooooooooo");
 
 	while(1);

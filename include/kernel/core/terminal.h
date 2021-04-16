@@ -24,7 +24,13 @@ public:
     void Print(char* _str);
     void PutChar(char _c);
     void Clear(RGBColor _bgColor);
-private:
+public:
+    inline const RGBColor GetFontColor() { return fontColor; };
+    inline const void SetFontColor(RGBColor _color) { fontColor = _color; };
 
+    inline const RGBColor GetBackgroundColor() { return bgColor; };
+    inline const void SetBGColor(RGBColor _color) { bgColor = _color; };
+
+    inline const void SetFontSize(int _fontSize) { fontSize = _fontSize; };
 };
 
