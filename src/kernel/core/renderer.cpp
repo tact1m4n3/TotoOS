@@ -40,8 +40,8 @@ void Renderer::DrawChar(int _posX, int _posY, unsigned char _c, int _fontSize, R
 {
     uint8_t* fontBitmap = (uint8_t*)((size_t)activeFont->glyphBuffer + 16 * _c);
 
-    for (int j = 0; j < 16; ++j)
-        for (int i = 0; i < 8; ++i)
+    for (int j = 1; j <= 16; ++j)
+        for (int i = 1; i <= 8; ++i)
             if (fontBitmap[j] & (1 << 8-i))
                 for (int k = 0; k < _fontSize; ++k)
                     for (int l = 0; l < _fontSize; ++l)
