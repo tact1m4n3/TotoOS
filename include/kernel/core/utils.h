@@ -2,7 +2,7 @@
 
 #include <core/utils.h>
 
-#define nullptr (void*)0
+#define nullptr 0
 
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;

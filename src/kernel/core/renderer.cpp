@@ -22,21 +22,30 @@ void Renderer::DrawPixel(int _posX, int _posY, RGBColor _color)
     videoBuffer[_posX + _posY * currentFrameBuffer->PixelsPerScanLine] = RGBToLegacyColor(_color);
 }
 
-void Renderer::DrawRectangle(int _posX, int _posY, int _sizeX, int _sizeY, RGBColor _color)
+void Renderer::DrawRectangle(int _posX, int _posY, int _sizeX, int _sizeY, int _borderSize, RGBColor _fgColor, RGBColor _bgColor)
 {
-
+    for (int i = 0; i < _sizeY; ++i)
+    {
+        for (int j = 0; j < _sizeX; ++j)
+        {
+            if ((i < _borderSize) || (j < _borderSize) || (j >= _sizeX - _borderSize) || (i >= _sizeY - _borderSize))
+                DrawPixel(_posX + j, _posY + i, _fgColor);
+            else
+                DrawPixel(_posX + j, _posY + i, _bgColor);
+        }
+    }
 }
 
-void Renderer::DrawChar(int _posX, int _posY, unsigned char c, RGBColor _fontColor, RGBColor _bgColor)
+void Renderer::DrawChar(int _posX, int _posY, unsigned char _c, int _fontSize, RGBColor _fontColor, RGBColor _bgColor)
 {
-    uint8_t* fontBitmap = (uint8_t*)((size_t)activeFont->glyphBuffer + 16 * c);
+    uint8_t* fontBitmap = (uint8_t*)((size_t)activeFont->glyphBuffer + 16 * _c);
 
     for (int j = 0; j < 16; ++j)
         for (int i = 0; i < 8; ++i)
             if (fontBitmap[j] & (1 << 8-i))
-                videoBuffer[_posX + i + (_posY + j) * 1920] = RGBToLegacyColor(_fontColor);
-            else
-                videoBuffer[_posX + i + (_posY + j) * 1920] = RGBToLegacyColor(_bgColor);
+                for (int k = 0; k < _fontSize; ++k)
+                    for (int l = 0; l < _fontSize; ++l)
+                        videoBuffer[_posX + l + i * _fontSize + (_posY + k-1 + j * _fontSize) * 1920] = RGBToLegacyColor(_fontColor);
 }
 
 void Renderer::Clear(RGBColor _bgColor)
@@ -48,5 +57,5 @@ void Renderer::Clear(RGBColor _bgColor)
 
 uint32_t Renderer::RGBToLegacyColor(RGBColor _color)
 {
-    return (_color.b << 16) | (_color.g << 8) | _color.r;
+    return (_color.r << 16) | (_color.g << 8) | _color.b;
 }
