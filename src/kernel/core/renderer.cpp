@@ -38,7 +38,7 @@ void Renderer::DrawRectangle(int _posX, int _posY, int _sizeX, int _sizeY, int _
 
 void Renderer::DrawChar(int _posX, int _posY, unsigned char _c, int _fontSize, RGBColor _fontColor, RGBColor _bgColor)
 {
-    uint8_t* fontBitmap = (uint8_t*)((size_t)activeFont->glyphBuffer + 16 * _c);
+    uint8_t* fontBitmap = (uint8_t*)((uint64_t)activeFont->glyphBuffer + 16 * _c);
 
     for (int j = 1; j <= 16; ++j)
         for (int i = 1; i <= 8; ++i)

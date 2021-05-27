@@ -1,15 +1,15 @@
 #include <core/utils.h>
 #include <core/renderer.h>
 #include <core/terminal.h>
-#include <mm/kmem.h>
+#include <mm/pmm.h>
 
 struct BootInfo
 {
 	FrameBuffer* frameBuffer;
 	Psf1Font* psf1Font;
 	EfiMemoryDescriptor* memoryMap;
-	size_t memoryMapSize;
-	size_t memoryMapDescriptorSize;
+	uint64_t memoryMapSize;
+	uint64_t memoryMapDescriptorSize;
 };
 
 extern "C" void main(BootInfo* bootInfo)
@@ -26,22 +26,16 @@ extern "C" void main(BootInfo* bootInfo)
 	terminal.Print("x");
 	terminal.PrintNumber(bootInfo->frameBuffer->Height);
 	terminal.Print("\nVideo Memory Buffer: ");
-	terminal.PrintHex((size_t)bootInfo->frameBuffer->BaseAddress);
+	terminal.PrintHex((uint64_t)bootInfo->frameBuffer->BaseAddress);
 	terminal.Print("\n\n");
 	// ----------------------------------------------------------------------------
 	
-	size_t memoryMapEntries = bootInfo->memoryMapSize / bootInfo->memoryMapDescriptorSize;
-	for (int i = 0; i < memoryMapEntries; ++i)
-	{
-		EfiMemoryDescriptor* desc = (EfiMemoryDescriptor*)((size_t)bootInfo->memoryMap + i * bootInfo->memoryMapDescriptorSize);
+	PhysicalMemoryManager pmm(bootInfo->memoryMap, bootInfo->memoryMapSize, bootInfo->memoryMapDescriptorSize);
 
-		if (desc->type == MEM_TYPE_CONVENTIONAL_MEMORY)
-		{
-			terminal.Print(EfiMemoryTypeNames[desc->type]);
-			terminal.Print(" ");
-			terminal.PrintHex((size_t)desc->physAddr);
-			terminal.Print("\n");
-		}
+	for (int i = 0; i < 3; ++i)
+	{
+		terminal.PrintHex(pmm.AllocatePage());
+		terminal.Print("\n");
 	}
 
 	while(1);

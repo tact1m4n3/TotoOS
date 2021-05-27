@@ -5,7 +5,7 @@
 struct FrameBuffer
 {
 	void* BaseAddress;
-	size_t BufferSize;
+	uint64_t BufferSize;
 	unsigned int Width;
 	unsigned int Height;
 	unsigned int PixelsPerScanLine;

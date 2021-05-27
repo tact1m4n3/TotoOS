@@ -1,6 +1,6 @@
 #include <core/utils.h>
 
-char* convert(size_t num, size_t base)
+char* convert(uint64_t num, uint64_t base)
 {
     static char chrs[] = "0123456789ABCDEF";
     static char buffer[50];

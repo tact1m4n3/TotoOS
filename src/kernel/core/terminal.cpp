@@ -34,12 +34,12 @@ void Terminal::Print(char* _str)
         PutChar(*ptr);
 }
 
-void Terminal::PrintNumber(size_t num)
+void Terminal::PrintNumber(uint64_t num)
 {
     Print(convert(num, 10));
 }
 
-void Terminal::PrintHex(size_t num)
+void Terminal::PrintHex(uint64_t num)
 {
     Print("0x");
     Print(convert(num, 16));
